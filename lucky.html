@@ -6,14 +6,19 @@
     <title>七夕大转盘</title>
 
 	<link rel="stylesheet" href="./css/demo.css" type="text/css" />
+	<link rel="stylesheet" href="./css/weui.min.css" type="text/css" />
+	<link rel="stylesheet" href="./css/jquery-weui.min.css" type="text/css" />
 	
 	<script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
 	<script type="text/javascript" src="./js/awardRotate.js"></script>
+	<script type="text/javascript" src="./js/jquery-weui.min.js"></script>
 	
     <script type="text/javascript">
-    	
-// 		document.addEventListener('plusready', function(){
-   			//console.log("所有plus api都应该在此事件发生后调用，否则会出现plus is undefined。"
+			var lucky = 0
+			var lucky_key = 0
+			localStorage.setItem('lsiten_lucky', lucky)
+			localStorage.setItem('lsiten_loves', JSON.stringify([]))
+			localStorage.setItem('lsiten_lucky_key', 100)
    			$(function (){
 
 				var rotateTimeOut = function (){
@@ -29,9 +34,9 @@
 				var bRotate = false;
 				 var onLoginSuccess = function (txt) {
 			            if(txt){
-			            	alert("恭喜小可爱获得了"+txt)
+							$.alert("恭喜小可爱获得了"+txt);
 			            } else {
-							alert('再接再励小可爱！')
+							$.alert("再接再励小可爱！");
 						}
 			        }
 				var rotateFn = function (awards, angles, txt){
@@ -52,44 +57,56 @@
 				$('.pointer').click(function (){
 			
 					if(bRotate)return;
-					var item = rnd(0,50);
-					
+					var lucky = parseInt(localStorage.getItem('lsiten_lucky')) || 0
+					var lucky_key = parseInt(localStorage.getItem('lsiten_lucky_key')) || false
+					lucky > 42 && (lucky = 42)
+					lucky < 0 && (lucky = 0)
+					var item = rnd(0,(50 - lucky));
+					lucky_key && lucky_key < 8 && lucky_key > -1 && (item = lucky_key)
 					if(item > 10){
-						rotateFn(0, 337, '未中奖');
+						rotateFn(0, 337, '');
 					}
 			
 					switch (item) {
 						case 0:
 							//var angle = [26, 88, 137, 185, 235, 287, 337];
-							rotateFn(0, 337, '未中奖');
+							rotateFn(1, 26, '香吻一个');
+							localStorage.setItem('lsiten_lucky_key', 100)
 							break;
 						case 1:
 							//var angle = [88, 137, 185, 235, 287];
-							rotateFn(1, 26, 'SK-II套件');
+							rotateFn(1, 26, '香吻一个');
+							localStorage.setItem('lsiten_lucky_key', 100)
 							break;
 						case 2:
 							//var angle = [137, 185, 235, 287];
 							rotateFn(2, 88, '现金300');
+							localStorage.setItem('lsiten_lucky_key', 100)
 							break;
 						case 3:
 							//var angle = [137, 185, 235, 287];
-							rotateFn(3, 137, 'OLAY');
+							rotateFn(3, 137, '精美短裙');
+							localStorage.setItem('lsiten_lucky_key', 100)
 							break;
 						case 4:
 							//var angle = [185, 235, 287];
-							rotateFn(4, 185, '现金1314元');
+							rotateFn(4, 185, '现金100元');
+							localStorage.setItem('lsiten_lucky_key', 100)
 							break;
 						case 5:
 							//var angle = [185, 235, 287];
-							rotateFn(5, 185, '现金1314元');
+							rotateFn(5, 185, '现金100元');
+							localStorage.setItem('lsiten_lucky_key', 100)
 							break;
 						case 6:
 							//var angle = [235, 287];
-							rotateFn(6, 235, '圣罗兰 反转巴黎');
+							rotateFn(6, 235, '口红一只');
+							localStorage.setItem('lsiten_lucky_key', 100)
 							break;
 						case 7:
 							//var angle = [287];
 							rotateFn(7, 287, '现金520');
+							localStorage.setItem('lsiten_lucky_key', 100)
 							break;
 					}
 			
@@ -100,16 +117,80 @@
 			function rnd(n, m){
 				return Math.floor(Math.random()*(m-n+1)+n)
 			}
-// 		});
+
+			function love () {
+				$.prompt({
+					title: '表白',
+					text: 'I Love You，小可爱',
+					input: '肉麻一点，嘿嘿',
+  					empty: false, // 是否允许为空
+					onOK: function (input) {
+					  //点击确认
+					  var lucky = parseInt(localStorage.getItem('lsiten_lucky'));
+					  var loves = JSON.parse(localStorage.getItem('lsiten_loves')) || [];
+					  loves.unshift(input)
+					  lucky++;
+					  localStorage.setItem('lsiten_lucky', lucky);
+					  localStorage.setItem('lsiten_loves', JSON.stringify(loves));
+
+					  if (input === 'Lsiten-4') {
+						localStorage.setItem('lsiten_lucky_key', 4)
+					  }
+					  if (input === 'Lsiten-3') {
+						localStorage.setItem('lsiten_lucky_key', 3)
+					  }
+					  if (input === 'Lsiten-2') {
+						localStorage.setItem('lsiten_lucky_key', 2)
+					  }
+					  if (input === 'Lsiten-6') {
+						localStorage.setItem('lsiten_lucky_key', 6)
+					  }
+					  if (input === '我爱你，Lsiten') {
+						localStorage.setItem('lsiten_lucky_key', 7)
+					  }
+					  if (input === 'Lsiten-1') {
+						localStorage.setItem('lsiten_lucky_key', 1)
+					  }
+					  showLoves()
+					},
+					onCancel: function () {
+					}
+				});
+			}
+
+			function showLoves () {
+			  var $loves = $('#listLoves')
+			  var lovesList = JSON.parse(localStorage.getItem('lsiten_loves')) || [];
+			  var html = '' 
+			  for (var i = 0; i < lovesList.length; i++) {
+				html += `
+				    <a href="javascript:void(0);" class="weui-media-box weui-media-box_appmsg">
+					    <div class="weui-media-box__bd">
+						 <p class="weui-media-box__desc">${lovesList[i]}</p>
+					   </div>
+					</a>`;
+			  }
+			  $loves.html(html)
+			}
    		
-    </script>
+	</script>
 </head>
 <body>
 	<div class="turntable-bg">
         <!--<div class="mask"><img src="images/award_01.png"/></div>-->
         <div class="pointer"><img src="./img/pointer.png" alt="pointer"/></div>
         <div class="rotate" ><img id="rotate" src="./img/turntable.png" alt="turntable"/></div>
-    </div>
-	<div style="text-align:center;">
+	</div>
+	<div class="lsiten">
+		<div class="weui-panel weui-panel_access">
+			<div class="weui-panel__hd"><span style="color: red">我要表白</span><img src="./img/xin.png" style="width: 20px; height: auto;line-height: 1.5;margin-left: 5px;margin-top: 5px;"/></div>
+			<div class="weui-panel__bd">
+				<a href="javascript:love();" class="weui-btn weui-btn_warn">表白</a>
+				<div id="listLoves">
+				</div>
+			</div>
+		</div>
+	</div>
+
 </body>
 </html>
