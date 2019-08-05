@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>七夕大转盘</title>
+
+	<link rel="stylesheet" href="./css/demo.css" type="text/css" />
+	
+	<script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+	<script type="text/javascript" src="./js/awardRotate.js"></script>
+	
+    <script type="text/javascript">
+    	
+// 		document.addEventListener('plusready', function(){
+   			//console.log("所有plus api都应该在此事件发生后调用，否则会出现plus is undefined。"
+   			$(function (){
+
+				var rotateTimeOut = function (){
+					$('#rotate').rotate({
+						angle:0,
+						animateTo:2160,
+						duration:8000,
+						callback:function (){
+							alert('网络超时，请检查您的网络设置！');
+						}
+					});
+				};
+				var bRotate = false;
+				 var onLoginSuccess = function (txt) {
+			            if(txt){
+			            	alert("恭喜小可爱获得了"+txt)
+			            } else {
+							alert('再接再励小可爱！')
+						}
+			        }
+				var rotateFn = function (awards, angles, txt){
+					bRotate = !bRotate;
+					$('#rotate').stopRotate();
+					$('#rotate').rotate({
+						angle:0,
+						animateTo:angles+1800,
+						duration:8000,
+						callback:function (){
+							
+							bRotate = !bRotate;
+							onLoginSuccess(txt)
+						}
+					})
+				};
+			
+				$('.pointer').click(function (){
+			
+					if(bRotate)return;
+					var item = rnd(0,50);
+					
+					if(item > 10){
+						rotateFn(0, 337, '未中奖');
+					}
+			
+					switch (item) {
+						case 0:
+							//var angle = [26, 88, 137, 185, 235, 287, 337];
+							rotateFn(0, 337, '未中奖');
+							break;
+						case 1:
+							//var angle = [88, 137, 185, 235, 287];
+							rotateFn(1, 26, 'SK-II套件');
+							break;
+						case 2:
+							//var angle = [137, 185, 235, 287];
+							rotateFn(2, 88, '现金300');
+							break;
+						case 3:
+							//var angle = [137, 185, 235, 287];
+							rotateFn(3, 137, 'OLAY');
+							break;
+						case 4:
+							//var angle = [185, 235, 287];
+							rotateFn(4, 185, '现金1314元');
+							break;
+						case 5:
+							//var angle = [185, 235, 287];
+							rotateFn(5, 185, '现金1314元');
+							break;
+						case 6:
+							//var angle = [235, 287];
+							rotateFn(6, 235, '圣罗兰 反转巴黎');
+							break;
+						case 7:
+							//var angle = [287];
+							rotateFn(7, 287, '现金520');
+							break;
+					}
+			
+					console.log(item);
+					
+				});
+			});
+			function rnd(n, m){
+				return Math.floor(Math.random()*(m-n+1)+n)
+			}
+// 		});
+   		
+    </script>
+</head>
+<body>
+	<div class="turntable-bg">
+        <!--<div class="mask"><img src="images/award_01.png"/></div>-->
+        <div class="pointer"><img src="./img/pointer.png" alt="pointer"/></div>
+        <div class="rotate" ><img id="rotate" src="./img/turntable.png" alt="turntable"/></div>
+    </div>
+	<div style="text-align:center;">
+</body>
+</html>
