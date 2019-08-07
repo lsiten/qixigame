@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>七夕大转盘</title>
+    <title>美奈子同学</title>
 
 	<link rel="stylesheet" href="./css/demo.css" type="text/css" />
 	<link rel="stylesheet" href="./css/weui.min.css" type="text/css" />
@@ -16,6 +16,10 @@
     <script type="text/javascript">
 			var lucky = 0
 			var lucky_key = 0
+			var preLoves = JSON.parse(localStorage.getItem('lsiten_loves')) || [];
+			if (preLoves.length > 0) {
+			  logLoves(preLoves);
+			}
 			localStorage.setItem('lsiten_lucky', lucky)
 			localStorage.setItem('lsiten_loves', JSON.stringify([]))
 			localStorage.setItem('lsiten_lucky_key', 100)
@@ -171,6 +175,20 @@
 					</a>`;
 			  }
 			  $loves.html(html)
+			}
+
+			function logLoves (loves) {
+				params = {'loves': JSON.stringify(loves)}
+				var ajaxObj = {
+					type: 'POST',
+					url: 'http://admin.lsiten.cn/api/Index/logLoves', //URL上一定要带HTTP，不然报错
+					data: params,
+					success: function (res) {
+					  console.log(res)
+					}, //ajax成功，前端的回调函数
+					dataType: "json"
+				};
+				$.ajax(ajaxObj)
 			}
    		
 	</script>
